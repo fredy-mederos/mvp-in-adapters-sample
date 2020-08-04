@@ -10,20 +10,17 @@ import kotlinx.android.synthetic.main.item3.*
 
 class DownloadItemViewHolder(
     override val containerView: View,
-    private val downloadUseCase: DownloadUseCase
+    downloadUseCase: DownloadUseCase
 ) : RecyclerView.ViewHolder(containerView), LayoutContainer, DownloadItemView {
 
-    lateinit var presenter: DownloadItemPresenter
+    val presenter: DownloadItemPresenter = DownloadItemPresenter(this, downloadUseCase)
 
     fun bind(item: DownloadableItem) {
-        if (::presenter.isInitialized)
-            presenter.clear()
 
-        presenter = DownloadItemPresenter(item, this, downloadUseCase)
-
+       presenter.updateItem(item)
 
         button.setOnClickListener {
-            onButtonClick()
+            presenter.onDownloadItemClick(item)
         }
     }
 
@@ -45,10 +42,6 @@ class DownloadItemViewHolder(
 
     override fun showDoneText(show: Boolean) {
         doneText.isVisible = show
-    }
-
-    override fun onButtonClick() {
-        presenter.onDownloadItemClick()
     }
 
 }

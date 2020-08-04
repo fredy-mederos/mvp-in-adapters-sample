@@ -12,17 +12,17 @@ import kotlinx.android.synthetic.main.item.*
 class PurchaseItemViewHolder(override val containerView: View) :
     RecyclerView.ViewHolder(containerView), LayoutContainer, PurchaseItemView {
 
-    lateinit var presenter: PurchaseItemPresenter
+    val presenter: PurchaseItemPresenter = PurchaseItemPresenter(this)
 
     fun bind(item: PurchaseItem) {
         Log.e("NEW PRESENTER", item.toString())
-        presenter = PurchaseItemPresenter(item, this)
+        presenter.updateItem(item)
 
         button1.setOnClickListener {
-            onBidButtonClick()
+            presenter.onBidButtonClick(item)
         }
         button2.setOnClickListener {
-            onPurchaseButtonClick()
+            presenter.onPurchaseButtonClick(item)
         }
     }
 
@@ -44,14 +44,6 @@ class PurchaseItemViewHolder(override val containerView: View) :
 
     override fun showBidButton(show: Boolean) {
         button1.isVisible = show
-    }
-
-    override fun onPurchaseButtonClick() {
-        presenter.onPurchaseButtonClick()
-    }
-
-    override fun onBidButtonClick() {
-        presenter.onBidButtonClick()
     }
 
     override fun showMessage(message: String) {

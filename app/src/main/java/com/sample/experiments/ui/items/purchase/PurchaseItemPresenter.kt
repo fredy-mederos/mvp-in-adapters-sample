@@ -3,8 +3,9 @@ package com.sample.experiments.ui.items.purchase
 import com.sample.experiments.domain.Permissions
 import com.sample.experiments.domain.PurchaseItem
 
-class PurchaseItemPresenter(private val item: PurchaseItem, val view: PurchaseItemView) {
-    init {
+class PurchaseItemPresenter(val view: PurchaseItemView) {
+
+    fun updateItem(item: PurchaseItem) {
         view.setInputValue(item.value)
         view.showTitle(item.title)
 
@@ -13,11 +14,11 @@ class PurchaseItemPresenter(private val item: PurchaseItem, val view: PurchaseIt
         view.showInput(item.permissions == Permissions.ALL)
     }
 
-    fun onPurchaseButtonClick() {
+    fun onPurchaseButtonClick(item: PurchaseItem) {
         view.showMessage("Buy click: ${item.title}")
     }
 
-    fun onBidButtonClick() {
+    fun onBidButtonClick(item: PurchaseItem) {
         view.showMessage("Bid click: ${item.title}")
     }
 }

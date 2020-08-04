@@ -12,14 +12,14 @@ import kotlinx.android.synthetic.main.item2.*
 class FeedbackItemViewHolder(override val containerView: View) :
     RecyclerView.ViewHolder(containerView), LayoutContainer, FeedbackItemView {
 
-    lateinit var presenter: FeedbackPresenter
+    private val presenter: FeedbackPresenter = FeedbackPresenter(this)
 
     fun bind(item: FeedbackItem) {
         Log.e("NEW PRESENTER", item.toString())
 
-        presenter = FeedbackPresenter(item, this)
+        presenter.updateItem(item)
         button2.setOnClickListener {
-            onButtonClick()
+            presenter.onButtonClick(item)
         }
     }
 
@@ -29,10 +29,6 @@ class FeedbackItemViewHolder(override val containerView: View) :
 
     override fun showButton(show: Boolean) {
         button2.isVisible = show
-    }
-
-    override fun onButtonClick() {
-        presenter.onButtonClick()
     }
 
     override fun showMessage(message: String) {

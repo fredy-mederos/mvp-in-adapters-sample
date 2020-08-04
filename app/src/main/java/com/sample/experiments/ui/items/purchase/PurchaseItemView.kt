@@ -6,7 +6,5 @@ interface PurchaseItemView {
     fun showInput(show: Boolean)
     fun showPurchaseButton(show: Boolean)
     fun showBidButton(show: Boolean)
-    fun onPurchaseButtonClick()
-    fun onBidButtonClick()
     fun showMessage(message: String)
 }

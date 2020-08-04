@@ -6,5 +6,4 @@ interface DownloadItemView {
     fun showProgress(show: Boolean)
     fun setProgress(value: Int)
     fun showDoneText(show: Boolean)
-    fun onButtonClick()
 }

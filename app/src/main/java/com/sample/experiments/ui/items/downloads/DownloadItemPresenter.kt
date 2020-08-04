@@ -6,23 +6,27 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 
 class DownloadItemPresenter(
-    private val item: DownloadableItem,
     private val view: DownloadItemView,
     private val downloadUseCase: DownloadUseCase
 ) : CoroutineScope by MainScope() {
 
-    init {
+    var job:Job?=null
+
+    fun updateItem(item: DownloadableItem) {
+        job?.cancel()
+
+
         view.showTitle(item.title)
         val status = downloadUseCase.status(item)
 
         if (status is DownloadUseCase.DownloadStatus)
-            resumeDownloading()
+            resumeDownloading(item)
         else
             updateViewWithStatus(downloadUseCase.status(item))
     }
 
-    private fun resumeDownloading() {
-        launch {
+    private fun resumeDownloading(item: DownloadableItem) {
+        job = launch {
             downloadUseCase.download(item).collect { status ->
                 if (isActive) {
                     updateViewWithStatus(status)
@@ -31,12 +35,8 @@ class DownloadItemPresenter(
         }
     }
 
-    fun onDownloadItemClick() {
-        resumeDownloading()
-    }
-
-    fun clear() {
-        coroutineContext.cancelChildren()
+    fun onDownloadItemClick(item: DownloadableItem) {
+        resumeDownloading(item)
     }
 
     private fun updateViewWithStatus(status: DownloadUseCase.DownloadStatus?) {
