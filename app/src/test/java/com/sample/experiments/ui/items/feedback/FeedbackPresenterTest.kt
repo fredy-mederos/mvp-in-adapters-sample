@@ -21,22 +21,28 @@ class FeedbackPresenterTest {
     @ParameterizedTest(name = "if the item is {0} the displayed title should be {1}")
     @MethodSource("itemsWithTitles")
     fun `show the item title`(item: FeedbackItem, title: String) {
-        FeedbackPresenter(item, view)
+        val presenter = FeedbackPresenter()
+        presenter.view = view
+        presenter.updateItem(item)
         verify(exactly = 1) { view.showTitle(title) }
     }
 
     @ParameterizedTest(name = "if the item is {0} the button visibility should be {1}")
     @MethodSource("itemsWithButtonsAvailability")
     fun `show the button if available`(item: FeedbackItem, visibility: Boolean) {
-        FeedbackPresenter(item, view)
+        val presenter = FeedbackPresenter()
+        presenter.view = view
+        presenter.updateItem(item)
         verify(exactly = 1) { view.showButton(visibility) }
     }
 
     @ParameterizedTest(name = "if the item is {0} the onclick message should be {1}")
     @MethodSource("itemsAndExpectedMessages")
     fun `show the message when click`(item: FeedbackItem, message: String) {
-        val presenter = FeedbackPresenter(item, view)
-        presenter.onButtonClick()
+        val presenter = FeedbackPresenter()
+        presenter.view = view
+        presenter.updateItem(item)
+        presenter.onButtonClick(item)
         verify(exactly = 1) { view.showMessage(message) }
     }
 

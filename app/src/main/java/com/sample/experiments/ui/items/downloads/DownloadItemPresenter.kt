@@ -4,17 +4,15 @@ import com.sample.experiments.domain.DownloadUseCase
 import com.sample.experiments.domain.DownloadableItem
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
+import javax.inject.Inject
 
-class DownloadItemPresenter(
-    private val view: DownloadItemView,
+class DownloadItemPresenter @Inject constructor(
     private val downloadUseCase: DownloadUseCase
 ) : CoroutineScope by MainScope() {
 
-    var job:Job?=null
+    lateinit var view: DownloadItemView
 
     fun updateItem(item: DownloadableItem) {
-        job?.cancel()
-
 
         view.showTitle(item.title)
         val status = downloadUseCase.status(item)
@@ -25,8 +23,12 @@ class DownloadItemPresenter(
             updateViewWithStatus(downloadUseCase.status(item))
     }
 
+    fun clear() {
+        coroutineContext.cancelChildren()
+    }
+
     private fun resumeDownloading(item: DownloadableItem) {
-        job = launch {
+        launch {
             downloadUseCase.download(item).collect { status ->
                 if (isActive) {
                     updateViewWithStatus(status)

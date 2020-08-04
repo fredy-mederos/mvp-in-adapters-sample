@@ -3,16 +3,22 @@ package com.sample.experiments.ui.items.feedback
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.sample.experiments.di.ViewHoldersEntryPoint
 import com.sample.experiments.domain.FeedbackItem
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item2.*
 
 class FeedbackItemViewHolder(override val containerView: View) :
     RecyclerView.ViewHolder(containerView), LayoutContainer, FeedbackItemView {
 
-    private val presenter: FeedbackPresenter = FeedbackPresenter(this)
+    private val presenter: FeedbackPresenter = EntryPointAccessors.fromActivity(
+        containerView.context as AppCompatActivity,
+        ViewHoldersEntryPoint::class.java
+    ).getFeedbackPresenter().apply { view = this@FeedbackItemViewHolder }
 
     fun bind(item: FeedbackItem) {
         Log.e("NEW PRESENTER", item.toString())

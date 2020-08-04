@@ -2,9 +2,11 @@ package com.sample.experiments.ui.items.purchase
 
 import com.sample.experiments.domain.Permissions
 import com.sample.experiments.domain.PurchaseItem
+import javax.inject.Inject
 
-class PurchaseItemPresenter(val view: PurchaseItemView) {
+class PurchaseItemPresenter @Inject constructor() {
 
+    lateinit var view: PurchaseItemView
     fun updateItem(item: PurchaseItem) {
         view.setInputValue(item.value)
         view.showTitle(item.title)

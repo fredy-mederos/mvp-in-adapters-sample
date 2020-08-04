@@ -1,23 +1,28 @@
 package com.sample.experiments.ui.items.downloads
 
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.sample.experiments.di.ViewHoldersEntryPoint
 import com.sample.experiments.domain.DownloadUseCase
 import com.sample.experiments.domain.DownloadableItem
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item3.*
 
 class DownloadItemViewHolder(
-    override val containerView: View,
-    downloadUseCase: DownloadUseCase
+    override val containerView: View
 ) : RecyclerView.ViewHolder(containerView), LayoutContainer, DownloadItemView {
 
-    val presenter: DownloadItemPresenter = DownloadItemPresenter(this, downloadUseCase)
+    val presenter: DownloadItemPresenter = EntryPointAccessors.fromActivity(
+        containerView.context as AppCompatActivity,
+        ViewHoldersEntryPoint::class.java
+    ).getDownloadItemPresenter().apply { view = this@DownloadItemViewHolder }
 
     fun bind(item: DownloadableItem) {
-
-       presenter.updateItem(item)
+        presenter.clear()
+        presenter.updateItem(item)
 
         button.setOnClickListener {
             presenter.onDownloadItemClick(item)

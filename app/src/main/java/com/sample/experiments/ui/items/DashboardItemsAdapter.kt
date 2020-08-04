@@ -14,8 +14,7 @@ private const val TYPE_FEEDBACK = 1;
 private const val TYPE_DOWNLOAD = 2;
 
 class DashboardItemsAdapter constructor(
-    private val items: List<DashboardItem>,
-    private val downloadUseCase: DownloadUseCase
+    private val items: List<DashboardItem>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -27,8 +26,7 @@ class DashboardItemsAdapter constructor(
                 LayoutInflater.from(parent.context).inflate(R.layout.item2, parent, false)
             )
             TYPE_DOWNLOAD -> DownloadItemViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.item3, parent, false),
-                downloadUseCase
+                LayoutInflater.from(parent.context).inflate(R.layout.item3, parent, false)
             )
             else -> error("unknown type: $viewType")
         }
