@@ -96,7 +96,7 @@ internal class DownloadItemPresenterTest {
         verify(exactly = 5) { view.showProgress(true) }
         verify(exactly = 5) { view.setProgress(any()) }
 
-        presenter.clear()
+        presenter.onDestroy()
         presenter = DownloadItemPresenter(downloadUseCase)
         presenter.view = view
         presenter.updateItem(item)

@@ -4,24 +4,21 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.RecyclerView
 import com.sample.experiments.di.ViewHoldersEntryPoint
 import com.sample.experiments.domain.PurchaseItem
+import com.sample.experiments.ui.items.MVPViewHolder
 import dagger.hilt.android.EntryPointAccessors
-import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item.*
 
-class PurchaseItemViewHolder(override val containerView: View) :
-    RecyclerView.ViewHolder(containerView), LayoutContainer, PurchaseItemView {
+class PurchaseItemViewHolder(view: View) : MVPViewHolder<PurchaseItemView, PurchaseItemPresenter, PurchaseItem>(view), PurchaseItemView {
 
-    val presenter: PurchaseItemPresenter = EntryPointAccessors.fromActivity(
+    override val presenter: PurchaseItemPresenter = EntryPointAccessors.fromActivity(
         containerView.context as AppCompatActivity,
         ViewHoldersEntryPoint::class.java
-    ).getPurchaseItemPresenter().apply { view = this@PurchaseItemViewHolder }
+    ).getPurchaseItemPresenter()
 
-    fun bind(item: PurchaseItem) {
-        //Log.e("NEW PRESENTER", item.toString())
-        presenter.updateItem(item)
+    override fun bindItem(item: PurchaseItem) {
+        super.bindItem(item)
 
         button1.setOnClickListener {
             presenter.onBidButtonClick(item)
@@ -54,4 +51,6 @@ class PurchaseItemViewHolder(override val containerView: View) :
     override fun showMessage(message: String) {
         Toast.makeText(containerView.context, message, Toast.LENGTH_SHORT).show()
     }
+
+    override fun getView() = this
 }

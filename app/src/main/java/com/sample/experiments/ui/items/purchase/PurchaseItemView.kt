@@ -1,6 +1,9 @@
 package com.sample.experiments.ui.items.purchase
 
-interface PurchaseItemView {
+import com.sample.experiments.ui.items.BasePresenter
+
+
+interface PurchaseItemView : BasePresenter.View{
     fun showTitle(title: String)
     fun setInputValue(value: String)
     fun showInput(show: Boolean)

@@ -1,28 +1,25 @@
 package com.sample.experiments.ui.items.feedback
 
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.RecyclerView
 import com.sample.experiments.di.ViewHoldersEntryPoint
 import com.sample.experiments.domain.FeedbackItem
+import com.sample.experiments.ui.items.MVPViewHolder
 import dagger.hilt.android.EntryPointAccessors
-import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item2.*
 
-class FeedbackItemViewHolder(override val containerView: View) :
-    RecyclerView.ViewHolder(containerView), LayoutContainer, FeedbackItemView {
+class FeedbackItemViewHolder(view: View) :
+    MVPViewHolder<FeedbackItemView, FeedbackPresenter, FeedbackItem>(view), FeedbackItemView {
 
-    private val presenter: FeedbackPresenter = EntryPointAccessors.fromActivity(
+    override val presenter: FeedbackPresenter = EntryPointAccessors.fromActivity(
         containerView.context as AppCompatActivity,
         ViewHoldersEntryPoint::class.java
-    ).getFeedbackPresenter().apply { view = this@FeedbackItemViewHolder }
+    ).getFeedbackPresenter()
 
-    fun bind(item: FeedbackItem) {
-        Log.e("NEW PRESENTER", item.toString())
-
+    override fun bindItem(item: FeedbackItem) {
+        super.bindItem(item)
         presenter.updateItem(item)
         button2.setOnClickListener {
             presenter.onButtonClick(item)
@@ -40,4 +37,6 @@ class FeedbackItemViewHolder(override val containerView: View) :
     override fun showMessage(message: String) {
         Toast.makeText(containerView.context, message, Toast.LENGTH_SHORT).show()
     }
+
+    override fun getView() = this
 }
