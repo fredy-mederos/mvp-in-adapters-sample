@@ -67,10 +67,7 @@ class DownloadUseCaseImpl(private val coroutineScope: CoroutineScope) :
                 job = null
                 return@launch
             }
-
-
-            delay(1_000)
-            Log.e("DownloadUseCaseImpl", "doJobs")
+            delay(10)
             cache.values.forEach { channel ->
                 when (val status = channel.lastValue) {
                     is DownloadUseCase.DownloadStatus.Downloading -> {
@@ -88,6 +85,8 @@ class DownloadUseCaseImpl(private val coroutineScope: CoroutineScope) :
                     }
                 }
             }
+            Log.e("DownloadUseCaseImpl","tick")
+            delay(1_000)
         }
     }
 }

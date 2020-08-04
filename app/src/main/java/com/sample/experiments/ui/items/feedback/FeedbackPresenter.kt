@@ -1,15 +1,17 @@
 package com.sample.experiments.ui.items.feedback
 
 import com.sample.experiments.domain.FeedbackItem
+import com.sample.experiments.ui.items.BasePresenter
+import javax.inject.Inject
 
-class FeedbackPresenter(private val item: FeedbackItem, private val view: FeedbackItemView) {
+class FeedbackPresenter @Inject constructor() : BasePresenter<FeedbackItemView>() {
 
-    init {
-        view.showButton(item.feedbackAvailable)
-        view.showTitle(item.title)
+    fun updateItem(item: FeedbackItem) {
+        view?.showButton(item.feedbackAvailable)
+        view?.showTitle(item.title)
     }
 
-    fun onButtonClick() {
-        view.showMessage("Click on: ${item.title}")
+    fun onButtonClick(item: FeedbackItem) {
+        view?.showMessage("Click on: ${item.title}")
     }
 }

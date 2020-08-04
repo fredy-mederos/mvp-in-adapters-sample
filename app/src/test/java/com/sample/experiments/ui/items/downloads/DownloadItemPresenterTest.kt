@@ -40,7 +40,9 @@ internal class DownloadItemPresenterTest {
     @Test
     fun `test downloading flow`() = scope.runBlockingTest {
         val item = DownloadableItem("1", "Item1")
-        val presenter = DownloadItemPresenter(item, view, downloadUseCase)
+        val presenter = DownloadItemPresenter(downloadUseCase)
+        presenter.view = view
+        presenter.updateItem(item)
         downloadUseCase.sequence = listOf(
             DownloadUseCase.DownloadStatus.Downloading(0),
             DownloadUseCase.DownloadStatus.Downloading(10),
@@ -56,7 +58,7 @@ internal class DownloadItemPresenterTest {
         verify(exactly = 1) { view.showTitle(item.title) }
         verify(exactly = 0) { view.setProgress(any()) }
 
-        presenter.onDownloadItemClick()
+        presenter.onDownloadItemClick(item)
         advanceUntilIdle()
 
         verify(exactly = 6) { view.showButton(false) }
@@ -69,7 +71,9 @@ internal class DownloadItemPresenterTest {
     @Test
     fun `test downloading flow interrupted`() = scope.runBlockingTest {
         val item = DownloadableItem("1", "Item1")
-        var presenter = DownloadItemPresenter(item, view, downloadUseCase)
+        var presenter = DownloadItemPresenter(downloadUseCase)
+        presenter.view = view
+        presenter.updateItem(item)
         downloadUseCase.sequence = listOf(
             DownloadUseCase.DownloadStatus.Downloading(0),
             DownloadUseCase.DownloadStatus.Downloading(10),
@@ -84,7 +88,7 @@ internal class DownloadItemPresenterTest {
         verify(exactly = 1) { view.showTitle(item.title) }
         verify(exactly = 0) { view.setProgress(any()) }
 
-        presenter.onDownloadItemClick()
+        presenter.onDownloadItemClick(item)
         advanceUntilIdle()
 
 
@@ -92,8 +96,10 @@ internal class DownloadItemPresenterTest {
         verify(exactly = 5) { view.showProgress(true) }
         verify(exactly = 5) { view.setProgress(any()) }
 
-        presenter.clear()
-        presenter = DownloadItemPresenter(item, view, downloadUseCase)
+        presenter.onDestroy()
+        presenter = DownloadItemPresenter(downloadUseCase)
+        presenter.view = view
+        presenter.updateItem(item)
         verify(exactly = 5) { view.showButton(false) }
         verify(exactly = 5) { view.showProgress(true) }
         verify(exactly = 5) { view.setProgress(any()) }

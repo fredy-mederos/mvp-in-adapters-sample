@@ -7,6 +7,8 @@ class GetItemsUseCaseImpl @Inject constructor() : GetItemsUseCase {
 
     private val feedbackItems: List<FeedbackItem> = listOf(
         FeedbackItem("Item WithFeedback", true),
+        FeedbackItem("Item WithFeedback2", true),
+        FeedbackItem("Item WithFeedback3", true),
         FeedbackItem("Item Without", false),
         FeedbackItem("Item Without 2", false)
     )

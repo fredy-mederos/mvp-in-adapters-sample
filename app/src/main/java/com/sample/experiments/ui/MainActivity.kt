@@ -16,9 +16,6 @@ class MainActivity : AppCompatActivity(), DashBoardView {
     @Inject
     lateinit var presenter: DashboardPresenter
 
-    @Inject
-    lateinit var downloadUseCase: DownloadUseCase
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -36,7 +33,7 @@ class MainActivity : AppCompatActivity(), DashBoardView {
     }
 
     override fun showItems(items: List<DashboardItem>) {
-        recyclerView.adapter = DashboardItemsAdapter(items, downloadUseCase)
+        recyclerView.adapter = DashboardItemsAdapter(items)
     }
 }
 

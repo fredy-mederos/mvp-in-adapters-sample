@@ -1,29 +1,30 @@
 package com.sample.experiments.ui.items.downloads
 
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.RecyclerView
-import com.sample.experiments.domain.DownloadUseCase
+import com.sample.experiments.di.ViewHoldersEntryPoint
 import com.sample.experiments.domain.DownloadableItem
-import kotlinx.android.extensions.LayoutContainer
+import com.sample.experiments.ui.items.MVPViewHolder
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.android.synthetic.main.item3.*
 
 class DownloadItemViewHolder(
-    override val containerView: View,
-    private val downloadUseCase: DownloadUseCase
-) : RecyclerView.ViewHolder(containerView), LayoutContainer, DownloadItemView {
+    view: View
+) : MVPViewHolder<DownloadItemView, DownloadItemPresenter, DownloadableItem>(view),
+    DownloadItemView {
 
-    lateinit var presenter: DownloadItemPresenter
+    override val presenter: DownloadItemPresenter = EntryPointAccessors.fromActivity(
+        containerView.context as AppCompatActivity,
+        ViewHoldersEntryPoint::class.java
+    ).getDownloadItemPresenter()
 
-    fun bind(item: DownloadableItem) {
-        if (::presenter.isInitialized)
-            presenter.clear()
-
-        presenter = DownloadItemPresenter(item, this, downloadUseCase)
-
+    override fun bindItem(item: DownloadableItem) {
+        super.bindItem(item)
+        presenter.updateItem(item)
 
         button.setOnClickListener {
-            onButtonClick()
+            presenter.onDownloadItemClick(item)
         }
     }
 
@@ -47,8 +48,6 @@ class DownloadItemViewHolder(
         doneText.isVisible = show
     }
 
-    override fun onButtonClick() {
-        presenter.onDownloadItemClick()
-    }
+    override fun getView() = this
 
 }

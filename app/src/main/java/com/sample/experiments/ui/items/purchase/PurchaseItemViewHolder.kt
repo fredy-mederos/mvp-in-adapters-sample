@@ -1,28 +1,30 @@
 package com.sample.experiments.ui.items.purchase
 
-import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.RecyclerView
+import com.sample.experiments.di.ViewHoldersEntryPoint
 import com.sample.experiments.domain.PurchaseItem
-import kotlinx.android.extensions.LayoutContainer
+import com.sample.experiments.ui.items.MVPViewHolder
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.android.synthetic.main.item.*
 
-class PurchaseItemViewHolder(override val containerView: View) :
-    RecyclerView.ViewHolder(containerView), LayoutContainer, PurchaseItemView {
+class PurchaseItemViewHolder(view: View) : MVPViewHolder<PurchaseItemView, PurchaseItemPresenter, PurchaseItem>(view), PurchaseItemView {
 
-    lateinit var presenter: PurchaseItemPresenter
+    override val presenter: PurchaseItemPresenter = EntryPointAccessors.fromActivity(
+        containerView.context as AppCompatActivity,
+        ViewHoldersEntryPoint::class.java
+    ).getPurchaseItemPresenter()
 
-    fun bind(item: PurchaseItem) {
-        Log.e("NEW PRESENTER", item.toString())
-        presenter = PurchaseItemPresenter(item, this)
+    override fun bindItem(item: PurchaseItem) {
+        super.bindItem(item)
 
         button1.setOnClickListener {
-            onBidButtonClick()
+            presenter.onBidButtonClick(item)
         }
         button2.setOnClickListener {
-            onPurchaseButtonClick()
+            presenter.onPurchaseButtonClick(item)
         }
     }
 
@@ -46,15 +48,9 @@ class PurchaseItemViewHolder(override val containerView: View) :
         button1.isVisible = show
     }
 
-    override fun onPurchaseButtonClick() {
-        presenter.onPurchaseButtonClick()
-    }
-
-    override fun onBidButtonClick() {
-        presenter.onBidButtonClick()
-    }
-
     override fun showMessage(message: String) {
         Toast.makeText(containerView.context, message, Toast.LENGTH_SHORT).show()
     }
+
+    override fun getView() = this
 }

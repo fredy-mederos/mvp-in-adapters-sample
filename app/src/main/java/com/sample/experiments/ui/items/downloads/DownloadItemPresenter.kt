@@ -2,26 +2,29 @@ package com.sample.experiments.ui.items.downloads
 
 import com.sample.experiments.domain.DownloadUseCase
 import com.sample.experiments.domain.DownloadableItem
-import kotlinx.coroutines.*
+import com.sample.experiments.ui.items.BasePresenter
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DownloadItemPresenter(
-    private val item: DownloadableItem,
-    private val view: DownloadItemView,
+class DownloadItemPresenter @Inject constructor(
     private val downloadUseCase: DownloadUseCase
-) : CoroutineScope by MainScope() {
+) : BasePresenter<DownloadItemView>() {
 
-    init {
-        view.showTitle(item.title)
+    fun updateItem(item: DownloadableItem) {
+
+        view?.showTitle(item.title)
         val status = downloadUseCase.status(item)
 
         if (status is DownloadUseCase.DownloadStatus)
-            resumeDownloading()
+            resumeDownloading(item)
         else
             updateViewWithStatus(downloadUseCase.status(item))
     }
 
-    private fun resumeDownloading() {
+    private fun resumeDownloading(item: DownloadableItem) {
         launch {
             downloadUseCase.download(item).collect { status ->
                 if (isActive) {
@@ -31,21 +34,17 @@ class DownloadItemPresenter(
         }
     }
 
-    fun onDownloadItemClick() {
-        resumeDownloading()
-    }
-
-    fun clear() {
-        coroutineContext.cancelChildren()
+    fun onDownloadItemClick(item: DownloadableItem) {
+        resumeDownloading(item)
     }
 
     private fun updateViewWithStatus(status: DownloadUseCase.DownloadStatus?) {
-        view.showButton(status == null)
-        view.showProgress(status is DownloadUseCase.DownloadStatus.Downloading)
-        view.showDoneText(status is DownloadUseCase.DownloadStatus.Finished)
+        view?.showButton(status == null)
+        view?.showProgress(status is DownloadUseCase.DownloadStatus.Downloading)
+        view?.showDoneText(status is DownloadUseCase.DownloadStatus.Finished)
 
         if (status is DownloadUseCase.DownloadStatus.Downloading) {
-            view.setProgress(status.percent)
+            view?.setProgress(status.percent)
         }
     }
 }
