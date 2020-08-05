@@ -7,7 +7,10 @@ import javax.inject.Inject
 
 class PurchaseItemPresenter @Inject constructor() : BasePresenter<PurchaseItemView>() {
 
+    lateinit var item: PurchaseItem
+
     fun updateItem(item: PurchaseItem) {
+        this.item = item
         view?.setInputValue(item.value)
         view?.showTitle(item.title)
 
@@ -16,11 +19,11 @@ class PurchaseItemPresenter @Inject constructor() : BasePresenter<PurchaseItemVi
         view?.showInput(item.permissions == Permissions.ALL)
     }
 
-    fun onPurchaseButtonClick(item: PurchaseItem) {
-        view?.showMessage("Buy click: ${item.title}")
+    fun onPurchaseButtonClick() {
+        view?.showMessage("Buy click: purchase clicked with=${item.title}")
     }
 
-    fun onBidButtonClick(item: PurchaseItem) {
+    fun onBidButtonClick() {
         view?.showMessage("Bid click: ${item.title}")
     }
 }

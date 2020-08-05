@@ -6,12 +6,16 @@ import javax.inject.Inject
 
 class FeedbackPresenter @Inject constructor() : BasePresenter<FeedbackItemView>() {
 
+    lateinit var item : FeedbackItem
+
     fun updateItem(item: FeedbackItem) {
+        this.item = item
+
         view?.showButton(item.feedbackAvailable)
         view?.showTitle(item.title)
     }
 
-    fun onButtonClick(item: FeedbackItem) {
+    fun onButtonClick() {
         view?.showMessage("Click on: ${item.title}")
     }
 }

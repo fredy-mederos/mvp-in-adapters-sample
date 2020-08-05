@@ -13,8 +13,10 @@ class DownloadItemPresenter @Inject constructor(
     private val downloadUseCase: DownloadUseCase
 ) : BasePresenter<DownloadItemView>() {
 
-    fun updateItem(item: DownloadableItem) {
+    lateinit var item: DownloadableItem
 
+    fun updateItem(item: DownloadableItem) {
+        this.item = item
         view?.showTitle(item.title)
         val status = downloadUseCase.status(item)
 
@@ -34,7 +36,7 @@ class DownloadItemPresenter @Inject constructor(
         }
     }
 
-    fun onDownloadItemClick(item: DownloadableItem) {
+    fun onDownloadItemClick() {
         resumeDownloading(item)
     }
 
