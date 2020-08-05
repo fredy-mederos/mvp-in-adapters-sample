@@ -6,9 +6,11 @@ import androidx.lifecycle.lifecycleScope
 import com.sample.experiments.domain.DownloadUseCase
 import com.sample.experiments.domain.FormatDate
 import com.sample.experiments.domain.GetItemsUseCase
+import com.sample.experiments.domain.TimeProvider
 import com.sample.experiments.impl.DownloadUseCaseImpl
 import com.sample.experiments.impl.FormatDateImpl
 import com.sample.experiments.impl.GetItemsUseCaseImpl
+import com.sample.experiments.impl.TimeProviderImpl
 import com.sample.experiments.ui.items.downloads.DownloadItemPresenter
 import com.sample.experiments.ui.items.feedback.FeedbackPresenter
 import com.sample.experiments.ui.items.purchase.PurchaseItemPresenter
@@ -21,6 +23,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import javax.inject.Qualifier
 
 
 @Module
@@ -34,6 +39,10 @@ abstract class BindModule {
     @Binds
     @ActivityScoped
     abstract fun bindFormatDate(impl: FormatDateImpl): FormatDate
+
+    @Binds
+    @ActivityScoped
+    abstract fun bindProvider(impl: TimeProviderImpl): TimeProvider
 }
 
 @Module
@@ -45,6 +54,12 @@ class Module {
     fun downloadUseCase(@ActivityContext context: Context): DownloadUseCase {
         return DownloadUseCaseImpl((context as AppCompatActivity).lifecycleScope)
     }
+
+    @Provides
+    @MainThreadScheduler
+    fun providesMainThreadScheduler(): Scheduler {
+        return AndroidSchedulers.mainThread()
+    }
 }
 
 @EntryPoint
@@ -55,3 +70,7 @@ interface ViewHoldersEntryPoint {
     fun getPurchaseItemPresenter(): PurchaseItemPresenter
     fun getTimerItemPresenter(): TimerItemPresenter
 }
+
+@Retention
+@Qualifier
+annotation class MainThreadScheduler

@@ -23,3 +23,7 @@ interface GetItemsUseCase {
 interface FormatDate {
     operator fun invoke(format: String, date: Date): String
 }
+
+interface TimeProvider {
+    fun currentTime(): Long
+}
