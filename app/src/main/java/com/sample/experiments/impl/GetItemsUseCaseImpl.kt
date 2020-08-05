@@ -1,7 +1,11 @@
 package com.sample.experiments.impl
 
+import android.text.format.DateFormat
 import com.sample.experiments.domain.*
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
+import kotlin.random.Random
 
 class GetItemsUseCaseImpl @Inject constructor() : GetItemsUseCase {
 
@@ -64,5 +68,19 @@ class GetItemsUseCaseImpl @Inject constructor() : GetItemsUseCase {
         )
     )
 
-    override fun invoke() = (purchaseItem + downloadableItems + feedbackItems).shuffled()
+
+    @OptIn(ExperimentalStdlibApi::class)
+    val timerItems: List<TimerItem> by lazy {
+        val baseEndTime = System.currentTimeMillis() + 30_000 //30 seconds from now
+        val items = ArrayList<TimerItem>()
+        repeat(10) {
+            val date = Date(baseEndTime + Random.nextLong(90_000))
+            items.add(TimerItem("Ends at: " + DateFormat.format("HH:mm:ss", date).toString(), date))
+        }
+        items
+    }
+
+    override fun invoke() =
+        (purchaseItem + downloadableItems + feedbackItems + timerItems)
+            .shuffled()
 }
