@@ -32,11 +32,9 @@
             android:paddingTop="5dp"
             android:paddingRight="10dp"
             android:paddingBottom="5dp"
-            android:text="10:05:10"
+            tools:text="10:05:10"
             android:textColor="@android:color/white"
-            android:textSize="26sp"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:textSize="26sp" />
     </RelativeLayout>
 
     <ImageView

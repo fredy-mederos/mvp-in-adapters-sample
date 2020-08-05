@@ -1,6 +1,7 @@
 package com.sample.experiments.domain
 
 import kotlinx.coroutines.flow.Flow
+import java.util.*
 
 interface DownloadUseCase {
 
@@ -17,4 +18,8 @@ interface DownloadUseCase {
 
 interface GetItemsUseCase {
     operator fun invoke(): List<DashboardItem>
+}
+
+interface FormatDate {
+    operator fun invoke(format: String, date: Date): String
 }

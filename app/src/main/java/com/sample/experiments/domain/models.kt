@@ -23,7 +23,6 @@ data class DownloadableItem(
 ) : DashboardItem
 
 data class TimerItem(
-    val title: String,
     val endDate: Date
 ) : DashboardItem
 

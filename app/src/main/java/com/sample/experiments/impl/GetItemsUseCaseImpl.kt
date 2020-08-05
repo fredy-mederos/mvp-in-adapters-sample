@@ -75,7 +75,7 @@ class GetItemsUseCaseImpl @Inject constructor() : GetItemsUseCase {
         val items = ArrayList<TimerItem>()
         repeat(10) {
             val date = Date(baseEndTime + Random.nextLong(90_000))
-            items.add(TimerItem("Ends at: " + DateFormat.format("HH:mm:ss", date).toString(), date))
+            items.add(TimerItem( date))
         }
         items
     }
