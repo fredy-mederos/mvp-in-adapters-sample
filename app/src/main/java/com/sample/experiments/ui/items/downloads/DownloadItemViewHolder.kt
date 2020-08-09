@@ -11,13 +11,13 @@ import kotlinx.android.synthetic.main.item3.*
 
 class DownloadItemViewHolder(
     view: View
-) : MVPViewHolder<DownloadItemView, DownloadItemPresenter, DownloadableItem>(view),
+) : MVPViewHolder<DownloadItemView, DownloadItemPresenter2, DownloadableItem>(view),
     DownloadItemView {
 
-    override val presenter: DownloadItemPresenter = EntryPointAccessors.fromActivity(
+    override val presenter: DownloadItemPresenter2 = EntryPointAccessors.fromActivity(
         containerView.context as AppCompatActivity,
         ViewHoldersEntryPoint::class.java
-    ).getDownloadItemPresenter()
+    ).getDownloadItemPresenter2()
 
     override fun bindItem(item: DownloadableItem) {
         super.bindItem(item)

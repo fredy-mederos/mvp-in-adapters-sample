@@ -1,19 +1,21 @@
 package com.sample.experiments.ui.items.downloads
 
 import com.sample.experiments.domain.DownloadUseCase
+import com.sample.experiments.domain.DownloadUseCase2
 import com.sample.experiments.domain.DownloadableItem
 import com.sample.experiments.ui.items.BasePresenter
-import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class DownloadItemPresenter @Inject constructor(
-    private val downloadUseCase: DownloadUseCase
-) : BasePresenter<DownloadItemView>() {
+class DownloadItemPresenter2 @Inject constructor(
+    private val downloadUseCase: DownloadUseCase2
+) : BasePresenter<DownloadItemView>(), DownloadUseCase2.OnStatusChange {
+
+    var _item: DownloadableItem? = null
+    override fun item() = _item
 
     fun updateItem(item: DownloadableItem) {
+        this._item = item
+        downloadUseCase.onStatusChangeObservers += this
 
         view?.showTitle(item.title)
         val status = downloadUseCase.status(item)
@@ -24,14 +26,15 @@ class DownloadItemPresenter @Inject constructor(
         updateViewWithStatus(status)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        downloadUseCase.onStatusChangeObservers -= this
+        _item = null
+    }
+
+
     private fun resumeDownloading(item: DownloadableItem) {
-        launch {
-            downloadUseCase.download(item).collect { status ->
-                if (isActive) {
-                    updateViewWithStatus(status)
-                }
-            }
-        }
+        downloadUseCase.download2(item)
     }
 
     fun onDownloadItemClick(item: DownloadableItem) {
@@ -46,5 +49,10 @@ class DownloadItemPresenter @Inject constructor(
         if (status is DownloadUseCase.DownloadStatus.Downloading) {
             view?.setProgress(status.percent)
         }
+    }
+
+
+    override fun onStatusChange(status: DownloadUseCase.DownloadStatus) {
+        updateViewWithStatus(status)
     }
 }
