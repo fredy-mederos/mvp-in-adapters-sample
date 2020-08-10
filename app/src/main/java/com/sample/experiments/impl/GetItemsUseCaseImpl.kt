@@ -91,9 +91,7 @@ class GetItemsUseCaseImpl @Inject constructor() : GetItemsUseCase {
         items
     }
 
-//    override fun invoke() =
-//        (purchaseItem + downloadableItems + feedbackItems + timerItems)
-//            .shuffled()
-
-    override fun invoke() = downloadableItems
+    override fun invoke() =
+        (purchaseItem + downloadableItems + feedbackItems + timerItems)
+            .shuffled()
 }
