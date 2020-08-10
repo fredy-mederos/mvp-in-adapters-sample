@@ -1,5 +1,7 @@
 package com.sample.experiments.domain
 
+import java.util.*
+
 data class PurchaseItem(
     val title: String,
     val value: String,
@@ -18,6 +20,10 @@ data class FeedbackItem(
 data class DownloadableItem(
     val id: String,
     val title: String
+) : DashboardItem
+
+data class TimerItem(
+    val endDate: Date
 ) : DashboardItem
 
 interface DashboardItem

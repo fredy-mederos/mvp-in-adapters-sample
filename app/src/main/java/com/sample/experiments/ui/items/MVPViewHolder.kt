@@ -3,10 +3,9 @@ package com.sample.experiments.ui.items
 import android.view.View
 import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.*
 
 abstract class MVPViewHolder<V : BasePresenter.View, P : BasePresenter<V>, T>(override val containerView: View) :
     RecyclerView.ViewHolder(containerView), LayoutContainer {
@@ -25,11 +24,12 @@ abstract class BasePresenter<V : BasePresenter.View> : CoroutineScope by MainSco
 
     interface View
 
+    protected val compositeDisposable = CompositeDisposable()
     var view: V? = null
 
-    @CallSuper
     open fun onDestroy() {
-        coroutineContext.cancelChildren()
+        compositeDisposable.clear()
+        coroutineContext.cancelChildren(CancellationException("view $this onDestroy"))
         view = null
     }
 }

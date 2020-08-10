@@ -4,17 +4,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.sample.experiments.R
-import com.sample.experiments.domain.DashboardItem
-import com.sample.experiments.domain.DownloadableItem
-import com.sample.experiments.domain.FeedbackItem
-import com.sample.experiments.domain.PurchaseItem
+import com.sample.experiments.domain.*
 import com.sample.experiments.ui.items.downloads.DownloadItemViewHolder
 import com.sample.experiments.ui.items.feedback.FeedbackItemViewHolder
 import com.sample.experiments.ui.items.purchase.PurchaseItemViewHolder
+import com.sample.experiments.ui.items.timer.TimeItemViewHolder
 
 private const val TYPE_PURCHASE = 0;
 private const val TYPE_FEEDBACK = 1;
 private const val TYPE_DOWNLOAD = 2;
+private const val TYPE_TIME = 3;
 
 class DashboardItemsAdapter constructor(
     private val items: List<DashboardItem>
@@ -31,6 +30,9 @@ class DashboardItemsAdapter constructor(
             TYPE_DOWNLOAD -> DownloadItemViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.item3, parent, false)
             )
+            TYPE_TIME -> TimeItemViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.item4, parent, false)
+            )
             else -> error("unknown type: $viewType")
         }
     }
@@ -40,6 +42,7 @@ class DashboardItemsAdapter constructor(
             is PurchaseItem -> TYPE_PURCHASE
             is FeedbackItem -> TYPE_FEEDBACK
             is DownloadableItem -> TYPE_DOWNLOAD
+            is TimerItem -> TYPE_TIME
             else -> error("unknown type: $item")
         }
     }
@@ -52,6 +55,7 @@ class DashboardItemsAdapter constructor(
             item is PurchaseItem && holder is PurchaseItemViewHolder -> holder.bindItem(item)
             item is FeedbackItem && holder is FeedbackItemViewHolder -> holder.bindItem(item)
             item is DownloadableItem && holder is DownloadItemViewHolder -> holder.bindItem(item)
+            item is TimerItem && holder is TimeItemViewHolder -> holder.bindItem(item)
             else -> error("unknown type: $item")
         }
     }
