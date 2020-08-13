@@ -6,6 +6,9 @@ import com.sample.experiments.R
 import com.sample.experiments.domain.DashboardItem
 import com.sample.experiments.domain.DownloadUseCase
 import com.sample.experiments.ui.items.DashboardItemsAdapter
+import com.sample.experiments.ui.items.timer.OnePerModelModel
+import com.sample.experiments.ui.items.timer.SingleEngineTimerModel
+import com.sample.experiments.ui.items.timer.onePerModelEngineTimer
 import com.sample.experiments.ui.items.timer.timerEpoxyModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
@@ -23,11 +26,19 @@ class MainActivity : AppCompatActivity(), DashBoardView {
         presenter.view = this
 
         val items = presenter.getNewItems()
+
         recyclerView.withModels {
             items.forEach {
-                timerEpoxyModel {
-                    id(it.id)
-                    model(it)
+                if(it is OnePerModelModel){
+                    onePerModelEngineTimer {
+                        id(it.endDate.time)
+                        model(it)
+                    }
+                }else if (it is SingleEngineTimerModel){
+                    timerEpoxyModel {
+                        id(it.id)
+                        model(it)
+                    }
                 }
             }
         }

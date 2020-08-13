@@ -1,8 +1,10 @@
 package com.sample.experiments.ui
 
+import com.sample.experiments.domain.DashboardItem
 import com.sample.experiments.domain.GetItemsUseCase
 import com.sample.experiments.domain.TimeProvider
 import com.sample.experiments.ui.items.BasePresenter
+import com.sample.experiments.ui.items.timer.OnePerModelModel
 import com.sample.experiments.ui.items.timer.SingleEngineTimerModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -26,23 +28,37 @@ class DashboardPresenter
     }
 
 
-    fun getNewItems() : List<SingleEngineTimerModel>{
+    fun getNewItems(): List<DashboardItem> {
         val items = timerItems
-        compositeDisposable.add(Observable.interval(1, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
+        compositeDisposable.add(Observable.interval(
+            1,
+            TimeUnit.SECONDS,
+            AndroidSchedulers.mainThread()
+        )
             .subscribe {
                 items.forEach {
-                    it.tick()
+                    if (it is SingleEngineTimerModel) {
+                        it.tick()
+                    }
                 }
             })
         return items
     }
 
-    private val timerItems: List<SingleEngineTimerModel> by lazy {
+    private val timerItems: List<DashboardItem> by lazy {
         val baseEndTime = System.currentTimeMillis() + 30_000 //30 seconds from now
-        val items = ArrayList<SingleEngineTimerModel>()
+        val items = ArrayList<DashboardItem>()
         repeat(1000) {
             val date = Date(baseEndTime + Random.nextLong(90_000))
-            items.add(SingleEngineTimerModel(date.time, date, timeProvider))
+            when (Random.nextInt(1, 3)) {
+                1 -> {
+                    items.add(SingleEngineTimerModel(date.time, date, timeProvider))
+                }
+                2 -> {
+                    items.add(OnePerModelModel(date, timeProvider))
+                }
+            }
+
         }
         items
     }
