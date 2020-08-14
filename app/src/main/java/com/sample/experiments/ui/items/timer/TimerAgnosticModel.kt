@@ -8,16 +8,9 @@ import android.widget.TextView
 import androidx.annotation.ColorRes
 import com.airbnb.epoxy.ModelProp
 import com.airbnb.epoxy.ModelView
-import com.airbnb.epoxy.OnViewRecycled
 import com.sample.experiments.R
 import com.sample.experiments.domain.DashboardItem
-import com.sample.experiments.domain.TimeProvider
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 @ModelView(
     saveViewState = true,
@@ -59,40 +52,35 @@ class TimerAgnosticModel @JvmOverloads constructor(
 }
 
 data class CopyPerRowUIModel(
-    val endDate : Date,
-    val endsAt : String,
-    val time : String,
+    val endDate: Date,
+    val endsAt: String,
+    val time: String,
     @ColorRes
     val finishedLabelColor: Int
 ) : DashboardItem {
 
-//    val endsAt: String = "OPM= Ends at: " + formatter.format(endDate)
-
-//    @ColorRes
-//    var finishedLabelColor: Int = R.color.red
-//        private set
-
-//    var time: String = getRemainingTimeMessage(getRemainingTime())
-//        private set
-
-
-
-    private fun getRemainingTime(endDate : Long, current : Long) =
+    private fun getRemainingTime(endDate: Long, current: Long) =
         endDate - current
 
     private fun getRemainingTimeMessage(remaining: Long) =
-        (remaining / 1_000).toInt().toString() + " seconds"
+        if (remaining > 0) {
+            (remaining / 1_000).toInt().toString() + " seconds"
+        } else {
+            "Finish"
+        }
 
-    private fun getFinishedColor(remainingTime : Long) =
+    private fun getFinishedColor(remainingTime: Long) =
         if (remainingTime > 0) R.color.red else R.color.green
 
-    fun copyWithCurrentTime(current : Long) : CopyPerRowUIModel {
+    //no need for this function and we can keep it outside
+    // it's here to just help with the sample
+    fun copyWithCurrentTime(current: Long): CopyPerRowUIModel {
         val remaining = getRemainingTime(endDate.time, current)
         val timeMessage = getRemainingTimeMessage(remaining)
 
         return copy(
             time = timeMessage,
-            finishedLabelColor = if (remaining > 0) R.color.red else R.color.green
+            finishedLabelColor = getFinishedColor(remaining)
         )
     }
 

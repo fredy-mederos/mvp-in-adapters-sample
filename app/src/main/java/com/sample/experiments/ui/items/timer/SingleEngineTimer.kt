@@ -10,7 +10,6 @@ import androidx.annotation.ColorRes
 import com.airbnb.epoxy.ModelProp
 import com.airbnb.epoxy.ModelView
 import com.airbnb.epoxy.OnViewRecycled
-import com.airbnb.epoxy.SimpleEpoxyModel
 import com.sample.experiments.R
 import com.sample.experiments.domain.DashboardItem
 import com.sample.experiments.domain.TimeProvider
@@ -31,7 +30,7 @@ class TimerEpoxyModel @JvmOverloads constructor(
     private val titleLabel: TextView
     private val timer: TextView
 
-    private lateinit var model: SingleEngineTimerModel
+    private lateinit var model: SingleEngineTimerUIModel
 
     init {
         val root = LayoutInflater
@@ -46,7 +45,7 @@ class TimerEpoxyModel @JvmOverloads constructor(
 
 
     @ModelProp
-    fun setModel(model: SingleEngineTimerModel) {
+    fun setModel(model: SingleEngineTimerUIModel) {
         this.model = model
         titleLabel.text = model.endsAt
         timer.text = model.time
@@ -68,7 +67,7 @@ class TimerEpoxyModel @JvmOverloads constructor(
 
 }
 
-data class SingleEngineTimerModel(
+data class SingleEngineTimerUIModel(
     val id: Long,
     private val endDate: Date,
     private val timeProvider: TimeProvider

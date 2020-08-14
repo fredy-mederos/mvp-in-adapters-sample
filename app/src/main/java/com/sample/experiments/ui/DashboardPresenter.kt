@@ -6,11 +6,10 @@ import com.sample.experiments.domain.GetItemsUseCase
 import com.sample.experiments.domain.TimeProvider
 import com.sample.experiments.ui.items.BasePresenter
 import com.sample.experiments.ui.items.timer.CopyPerRowUIModel
-import com.sample.experiments.ui.items.timer.OnePerModelModel
-import com.sample.experiments.ui.items.timer.SingleEngineTimerModel
+import com.sample.experiments.ui.items.timer.OnePerModelUIModel
+import com.sample.experiments.ui.items.timer.SingleEngineTimerUIModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.BiFunction
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -63,10 +62,10 @@ class DashboardPresenter
             val date = Date(baseEndTime + Random.nextLong(90_000))
             when (Random.nextInt(1, 5)) {
                 1 -> {
-                    items.add(SingleEngineTimerModel(date.time, date, timeProvider))
+                    items.add(SingleEngineTimerUIModel(date.time, date, timeProvider))
                 }
                 2 -> {
-                    items.add(OnePerModelModel(date, timeProvider))
+                    items.add(OnePerModelUIModel(date, timeProvider))
                 }
                 3 -> {
                     val remaining = getRemainingTime(date.time, timeProvider.currentTime())
@@ -89,7 +88,11 @@ class DashboardPresenter
         endDate - current
 
     private fun getRemainingTimeMessage(remaining: Long) =
-        (remaining / 1_000).toInt().toString() + " seconds"
+        if (remaining > 0) {
+            (remaining / 1_000).toInt().toString() + " seconds"
+        } else {
+            "Finish"
+        }
 
     private fun getFinishedColor(remainingTime : Long) =
         if (remainingTime > 0) R.color.red else R.color.green
@@ -102,7 +105,7 @@ class DashboardPresenter
                 AndroidSchedulers.mainThread()
             ).doOnNext {
                 items.forEach {
-                    if (it is SingleEngineTimerModel) {
+                    if (it is SingleEngineTimerUIModel) {
                         it.tick()
                     }
                 }

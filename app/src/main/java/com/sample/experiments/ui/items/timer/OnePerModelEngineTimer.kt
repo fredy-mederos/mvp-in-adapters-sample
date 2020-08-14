@@ -2,16 +2,13 @@ package com.sample.experiments.ui.items.timer
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.ColorRes
 import com.airbnb.epoxy.ModelProp
 import com.airbnb.epoxy.ModelView
 import com.airbnb.epoxy.OnViewRecycled
-import com.airbnb.epoxy.SimpleEpoxyModel
 import com.sample.experiments.R
 import com.sample.experiments.domain.DashboardItem
 import com.sample.experiments.domain.TimeProvider
@@ -21,7 +18,6 @@ import io.reactivex.disposables.Disposable
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.properties.Delegates
 
 @ModelView(
     saveViewState = true,
@@ -39,7 +35,7 @@ class OnePerModelEngineTimer @JvmOverloads constructor(
     private val titleLabel: TextView
     private val timer: TextView
 
-    private lateinit var model: OnePerModelModel
+    private lateinit var model: OnePerModelUIModel
 
     private var currentRunKey : Disposable? = null
 
@@ -69,7 +65,7 @@ class OnePerModelEngineTimer @JvmOverloads constructor(
     }
 
     @ModelProp
-    fun setModel(model: OnePerModelModel) {
+    fun setModel(model: OnePerModelUIModel) {
         this.model = model
         setBindValues()
     }
@@ -94,7 +90,7 @@ class OnePerModelEngineTimer @JvmOverloads constructor(
     }
 }
 
-data class OnePerModelModel(
+data class OnePerModelUIModel(
     val endDate : Date,
     private val timeProvider: TimeProvider
 ) : DashboardItem {

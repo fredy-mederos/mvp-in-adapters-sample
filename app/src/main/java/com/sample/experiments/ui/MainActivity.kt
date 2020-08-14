@@ -4,8 +4,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.sample.experiments.R
 import com.sample.experiments.domain.DashboardItem
-import com.sample.experiments.domain.DownloadUseCase
-import com.sample.experiments.ui.items.DashboardItemsAdapter
 import com.sample.experiments.ui.items.timer.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
@@ -36,12 +34,12 @@ class MainActivity : AppCompatActivity(), DashBoardView {
     override fun showItems(items: List<DashboardItem>) {
         recyclerView.withModels {
             items.forEach {
-                if(it is OnePerModelModel){
+                if(it is OnePerModelUIModel){
                     onePerModelEngineTimer {
                         id(it.endDate.time)
                         model(it)
                     }
-                }else if (it is SingleEngineTimerModel){
+                }else if (it is SingleEngineTimerUIModel){
                     timerEpoxyModel {
                         id(it.id)
                         model(it)
