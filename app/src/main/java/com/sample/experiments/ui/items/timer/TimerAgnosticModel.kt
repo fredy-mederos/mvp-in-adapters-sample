@@ -1,54 +1,25 @@
 package com.sample.experiments.ui.items.timer
 
-import android.content.Context
-import android.util.AttributeSet
-import android.view.LayoutInflater
-import android.widget.RelativeLayout
+import android.view.View
 import android.widget.TextView
 import androidx.annotation.ColorRes
-import com.airbnb.epoxy.ModelProp
-import com.airbnb.epoxy.ModelView
 import com.sample.experiments.R
 import com.sample.experiments.domain.DashboardItem
+import com.sample.experiments.ui.items.BindingViewHolder
 import java.util.*
 
-@ModelView(
-    saveViewState = true,
-    autoLayout = ModelView.Size.MATCH_WIDTH_WRAP_HEIGHT
-)
-class TimerAgnosticModel @JvmOverloads constructor(
-    context: Context,
-    attr: AttributeSet? = null,
-    defStyle: Int = 0
-) : RelativeLayout(context, attr, defStyle) {
+class CopyPerRowViewHolder(view: View) : BindingViewHolder<CopyPerRowUIModel>(view) {
 
-    private val titleLabel: TextView
-    private val timer: TextView
 
-    private lateinit var model: CopyPerRowUIModel
+    val titleLabel: TextView = view.findViewById(R.id.titleLabel)
+    val timer: TextView = view.findViewById(R.id.timerText)
 
-    init {
-        val root = LayoutInflater
-            .from(context)
-            .inflate(R.layout.item4, this, false)
-
-        addView(root)
-
-        titleLabel = findViewById(R.id.titleLabel)
-        timer = findViewById(R.id.timerText)
-    }
-
-    @ModelProp
-    fun setModel(model: CopyPerRowUIModel) {
-        this.model = model
-        setBindValues()
-    }
-
-    private fun setBindValues() {
+    override fun bind(model: CopyPerRowUIModel) {
         titleLabel.text = model.endsAt
         timer.text = model.time
         timer.setBackgroundResource(model.finishedLabelColor)
     }
+
 }
 
 data class CopyPerRowUIModel(

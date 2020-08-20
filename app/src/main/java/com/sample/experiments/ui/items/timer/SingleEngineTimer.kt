@@ -1,77 +1,41 @@
 package com.sample.experiments.ui.items.timer
 
-import android.content.Context
-import android.util.AttributeSet
-import android.util.Log
-import android.view.LayoutInflater
-import android.widget.RelativeLayout
+import android.view.View
 import android.widget.TextView
 import androidx.annotation.ColorRes
-import com.airbnb.epoxy.ModelProp
-import com.airbnb.epoxy.ModelView
-import com.airbnb.epoxy.OnViewRecycled
 import com.sample.experiments.R
 import com.sample.experiments.domain.DashboardItem
 import com.sample.experiments.domain.TimeProvider
+import com.sample.experiments.ui.items.BindingViewHolder
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.properties.Delegates
 
-@ModelView(
-    saveViewState = true,
-    autoLayout = ModelView.Size.MATCH_WIDTH_WRAP_HEIGHT
-)
-class TimerEpoxyModel @JvmOverloads constructor(
-    context: Context,
-    attr: AttributeSet? = null,
-    defStyle: Int = 0
-) : RelativeLayout(context, attr, defStyle) {
-
-    private val titleLabel: TextView
-    private val timer: TextView
-
-    private lateinit var model: SingleEngineTimerUIModel
-
-    init {
-        val root = LayoutInflater
-            .from(context)
-            .inflate(R.layout.item4, this, false)
-
-        addView(root)
-
-        titleLabel = findViewById(R.id.titleLabel)
-        timer = findViewById(R.id.timerText)
-    }
+class SingleEngineTimerViewHolder(view: View) : BindingViewHolder<SingleEngineTimerUIModel>(view) {
+    val titleLabel: TextView = view.findViewById(R.id.titleLabel)
+    val timer: TextView = view.findViewById(R.id.timerText)
+    var model: SingleEngineTimerUIModel? = null
 
 
-    @ModelProp
-    fun setModel(model: SingleEngineTimerUIModel) {
-        this.model = model
+    override fun bind(model: SingleEngineTimerUIModel) {
+        this.model?.listenToTimeChanges(null)
+
         titleLabel.text = model.endsAt
         timer.text = model.time
         timer.setBackgroundResource(model.finishedLabelColor)
-        Log.d("asghar" + model.id, "start=" + System.currentTimeMillis())
-        Log.d("asghar" + model.id, "start modelTime=" + model.time)
         model.listenToTimeChanges { remaining, finishedColor ->
-            Log.d("asghar" + model.id, "finish=" + System.currentTimeMillis())
-            Log.d("asghar" + model.id, "finish modelTime=" + model.time)
             timer.text = remaining
             timer.setBackgroundResource(finishedColor)
         }
+        this.model = model
     }
-
-    @OnViewRecycled
-    fun viewRecycled() {
-        model.listenToTimeChanges(null)
-    }
-
 }
 
 data class SingleEngineTimerUIModel(
     val id: Long,
     private val endDate: Date,
     private val timeProvider: TimeProvider
-): DashboardItem {
+) : DashboardItem {
     companion object {
         private val formatter = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
     }
@@ -81,7 +45,7 @@ data class SingleEngineTimerUIModel(
     val endsAt: String = "SE= Ends at: " + formatter.format(endDate)
 
     val finished: Boolean
-    get() = getRemainingTime() <= 0
+        get() = getRemainingTime() <= 0
 
     @ColorRes
     var finishedLabelColor: Int = R.color.red

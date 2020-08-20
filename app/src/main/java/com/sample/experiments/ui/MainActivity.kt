@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.sample.experiments.R
 import com.sample.experiments.domain.DashboardItem
+import com.sample.experiments.ui.items.DashboardItemsAdapter
 import com.sample.experiments.ui.items.timer.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
@@ -14,11 +15,14 @@ class MainActivity : AppCompatActivity(), DashBoardView {
 
     @Inject
     lateinit var presenter: DashboardPresenter
+    private val adapter = DashboardItemsAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         presenter.view = this
+
+        recyclerView.adapter = adapter
     }
 
     override fun onDestroy() {
@@ -32,26 +36,7 @@ class MainActivity : AppCompatActivity(), DashBoardView {
     }
 
     override fun showItems(items: List<DashboardItem>) {
-        recyclerView.withModels {
-            items.forEach {
-                if(it is OnePerModelUIModel){
-                    onePerModelEngineTimer {
-                        id(it.endDate.time)
-                        model(it)
-                    }
-                }else if (it is SingleEngineTimerUIModel){
-                    timerEpoxyModel {
-                        id(it.id)
-                        model(it)
-                    }
-                }else if (it is CopyPerRowUIModel){
-                    timerAgnosticModel {
-                        id(it.endDate.time)
-                        model(it)
-                    }
-                }
-            }
-        }
+        adapter.submitList(items)
     }
 }
 

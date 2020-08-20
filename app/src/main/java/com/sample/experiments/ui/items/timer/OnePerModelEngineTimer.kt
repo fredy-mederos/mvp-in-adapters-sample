@@ -1,17 +1,12 @@
 package com.sample.experiments.ui.items.timer
 
-import android.content.Context
-import android.util.AttributeSet
-import android.view.LayoutInflater
-import android.widget.RelativeLayout
+import android.view.View
 import android.widget.TextView
 import androidx.annotation.ColorRes
-import com.airbnb.epoxy.ModelProp
-import com.airbnb.epoxy.ModelView
-import com.airbnb.epoxy.OnViewRecycled
 import com.sample.experiments.R
 import com.sample.experiments.domain.DashboardItem
 import com.sample.experiments.domain.TimeProvider
+import com.sample.experiments.ui.items.BindingViewHolder
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -19,58 +14,21 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-@ModelView(
-    saveViewState = true,
-    autoLayout = ModelView.Size.MATCH_WIDTH_WRAP_HEIGHT
-)
-class OnePerModelEngineTimer @JvmOverloads constructor(
-    context: Context,
-    attr: AttributeSet? = null,
-    defStyle: Int = 0
-) : RelativeLayout(context, attr, defStyle) {
-
-    private lateinit var timerEngine: Observable<Long>
-    private lateinit var masterKeyDisposable: Disposable
-
-    private val titleLabel: TextView
-    private val timer: TextView
-
-    private lateinit var model: OnePerModelUIModel
-
-    private var currentRunKey : Disposable? = null
-
-    init {
-        val root = LayoutInflater
-            .from(context)
-            .inflate(R.layout.item4, this, false)
-
-        addView(root)
-
-        titleLabel = findViewById(R.id.titleLabel)
-        timer = findViewById(R.id.timerText)
-
-        createAndStartEngine()
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        //to stop the engine completely
-        masterKeyDisposable.dispose()
-    }
-
-    private fun createAndStartEngine() {
-        timerEngine = Observable.interval(1, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
+class OnePerModelViewHolder(view: View) : BindingViewHolder<OnePerModelUIModel>(view) {
+    private var timerEngine: Observable<Long> =
+        Observable.interval(1, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
             .share()
-        masterKeyDisposable = timerEngine.subscribe()
-    }
+    //I have to dig into the ViewHolder callback to see where is the right position to dispose this
+    // for the sake of example I think we can accept it as it is
+    var masterKeyDisposable: Disposable = timerEngine.subscribe()
+    var currentRunKey: Disposable? = null
 
-    @ModelProp
-    fun setModel(model: OnePerModelUIModel) {
-        this.model = model
-        setBindValues()
-    }
+    val titleLabel: TextView = view.findViewById(R.id.titleLabel)
+    val timer: TextView = view.findViewById(R.id.timerText)
 
-    private fun setBindValues() {
+    override fun bind(model: OnePerModelUIModel) {
+        currentRunKey?.dispose()
+
         model.tick()
         titleLabel.text = model.endsAt
         timer.text = model.time
@@ -84,19 +42,16 @@ class OnePerModelEngineTimer @JvmOverloads constructor(
         }
     }
 
-    @OnViewRecycled
-    fun viewRecycled() {
-        currentRunKey?.dispose()
-    }
 }
 
 data class OnePerModelUIModel(
-    val endDate : Date,
+    val endDate: Date,
     private val timeProvider: TimeProvider
 ) : DashboardItem {
     companion object {
         private val formatter = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
     }
+
     val endsAt: String = "OPM= Ends at: " + formatter.format(endDate)
 
     @ColorRes
