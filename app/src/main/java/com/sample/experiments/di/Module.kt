@@ -34,6 +34,10 @@ abstract class BindModule {
 
     @Binds
     @ActivityScoped
+    abstract fun bindGetItemsUseCase2(impl: GetItemUseCase2Impl): GetItemsUseCase2
+
+    @Binds
+    @ActivityScoped
     abstract fun bindFormatDate(impl: FormatDateImpl): FormatDate
 
     @Binds
