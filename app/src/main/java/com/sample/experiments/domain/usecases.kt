@@ -38,6 +38,11 @@ interface GetItemsUseCase {
     operator fun invoke(): List<DashboardItem>
 }
 
+
+interface GetItemsUseCase2 {
+    operator fun invoke(): Observable<List<DashboardItem>>
+}
+
 interface FormatDate {
     operator fun invoke(format: String, date: Date): String
 }

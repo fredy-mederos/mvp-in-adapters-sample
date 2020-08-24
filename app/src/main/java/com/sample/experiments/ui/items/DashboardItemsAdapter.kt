@@ -2,35 +2,36 @@ package com.sample.experiments.ui.items
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.sample.experiments.R
-import com.sample.experiments.domain.*
-import com.sample.experiments.ui.items.downloads.DownloadItemViewHolder
-import com.sample.experiments.ui.items.feedback.FeedbackItemViewHolder
-import com.sample.experiments.ui.items.purchase.PurchaseItemViewHolder
-import com.sample.experiments.ui.items.timer.TimeItemViewHolder
+import com.sample.experiments.domain.DashboardItem
+import com.sample.experiments.ui.items.timer.*
 
 private const val TYPE_PURCHASE = 0;
 private const val TYPE_FEEDBACK = 1;
 private const val TYPE_DOWNLOAD = 2;
 private const val TYPE_TIME = 3;
 
+private const val TYPE_SINGLE_ENGINE = 4
+private const val TYPE_COPY_PER_ROW = 5
+private const val TYPE_ONE_PER_MODEL = 6
+
 class DashboardItemsAdapter constructor(
-    private val items: List<DashboardItem>
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    //Diffutil is usually recommended. but here because we are coping one of the types to update
+    // it's required
+) : ListAdapter<DashboardItem, RecyclerView.ViewHolder>(DashboardDiff()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            TYPE_PURCHASE -> PurchaseItemViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.item, parent, false)
+            TYPE_COPY_PER_ROW -> CopyPerRowViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.item4, parent, false)
             )
-            TYPE_FEEDBACK -> FeedbackItemViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.item2, parent, false)
+            TYPE_ONE_PER_MODEL -> OnePerModelViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.item4, parent, false)
             )
-            TYPE_DOWNLOAD -> DownloadItemViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.item3, parent, false)
-            )
-            TYPE_TIME -> TimeItemViewHolder(
+            TYPE_SINGLE_ENGINE -> SingleEngineTimerViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.item4, parent, false)
             )
             else -> error("unknown type: $viewType")
@@ -38,25 +39,71 @@ class DashboardItemsAdapter constructor(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (val item = items[position]) {
-            is PurchaseItem -> TYPE_PURCHASE
-            is FeedbackItem -> TYPE_FEEDBACK
-            is DownloadableItem -> TYPE_DOWNLOAD
-            is TimerItem -> TYPE_TIME
+        return when (val item = getItem(position)) {
+            is SingleEngineTimerUIModel -> TYPE_SINGLE_ENGINE
+            is CopyPerRowUIModel -> TYPE_COPY_PER_ROW
+            is OnePerModelUIModel -> TYPE_ONE_PER_MODEL
             else -> error("unknown type: $item")
         }
     }
 
-    override fun getItemCount(): Int = items.count()
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = items[position]
+        val item = getItem(position)
         when {
-            item is PurchaseItem && holder is PurchaseItemViewHolder -> holder.bindItem(item)
-            item is FeedbackItem && holder is FeedbackItemViewHolder -> holder.bindItem(item)
-            item is DownloadableItem && holder is DownloadItemViewHolder -> holder.bindItem(item)
-            item is TimerItem && holder is TimeItemViewHolder -> holder.bindItem(item)
+            item is CopyPerRowUIModel && holder is CopyPerRowViewHolder -> holder.bind(item)
+            item is OnePerModelUIModel && holder is OnePerModelViewHolder -> holder.bind(item)
+            item is SingleEngineTimerUIModel && holder is SingleEngineTimerViewHolder -> holder.bind(item)
             else -> error("unknown type: $item")
         }
+    }
+}
+
+class DashboardDiff : DiffUtil.ItemCallback<DashboardItem>() {
+    override fun areItemsTheSame(oldItem: DashboardItem, newItem: DashboardItem): Boolean {
+        if (oldItem::class != newItem::class) {
+            return false
+        }
+
+        if (oldItem is SingleEngineTimerUIModel) {
+            newItem as SingleEngineTimerUIModel
+            return oldItem.id == newItem.id
+        }
+
+        if (oldItem is OnePerModelUIModel) {
+            newItem as OnePerModelUIModel
+            return oldItem.endDate.time == newItem.endDate.time
+        }
+
+
+        if (oldItem is CopyPerRowUIModel) {
+            newItem as CopyPerRowUIModel
+            return oldItem.endDate.time == newItem.endDate.time
+        }
+
+        error("oldItem type=$oldItem is not supported")
+    }
+
+    override fun areContentsTheSame(oldItem: DashboardItem, newItem: DashboardItem): Boolean {
+        if (oldItem::class != newItem::class) {
+            return false
+        }
+
+        if (oldItem is SingleEngineTimerUIModel) {
+            newItem as SingleEngineTimerUIModel
+            return (oldItem as SingleEngineTimerUIModel) == (newItem as SingleEngineTimerUIModel)
+        }
+
+        if (oldItem is OnePerModelUIModel) {
+            newItem as OnePerModelUIModel
+            return (oldItem as OnePerModelUIModel) == (newItem as OnePerModelUIModel)
+        }
+
+
+        if (oldItem is CopyPerRowUIModel) {
+            newItem as CopyPerRowUIModel
+            return (oldItem as CopyPerRowUIModel) == (newItem as CopyPerRowUIModel)
+        }
+
+        error("oldItem type=$oldItem is not supported")
     }
 }
